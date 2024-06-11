@@ -111,7 +111,7 @@ export interface TCheck<T> {
 	/**
 	 * 使用的规则(配置对象 router 的 key)
 	 */
-	ruleName: T
+	ruleName: T | string
 }
 
 /**
@@ -149,3 +149,11 @@ export interface TMatchMap {
  * 提取 router 中的 key
  */
 export type extractRouterKeys<T> = T extends { router: Record<infer K, any> } ? K : never
+
+/**
+ * 白名单验证配置
+ */
+export interface TCheckWhiteListConfig {
+	url: string
+	method: TMethod | string
+}

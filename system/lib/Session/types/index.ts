@@ -1,12 +1,9 @@
 import { type PropertyPath } from 'lodash-es'
 import Session from '../index.js'
 
-interface JSONObject {
-	[key: string]: string | number | boolean | null | TJSON
+export interface TJSON {
+	[key: string | number]: string | number | boolean | null | TJSON
 }
-interface JSONArray extends Array<string | number | boolean | null | TJSON> {}
-
-export type TJSON = JSONArray | JSONObject
 
 /**
  * 迭代回调函数
@@ -33,7 +30,7 @@ export interface TConfig {
 	 * @param id 会话 ID
 	 * @param content 会话内容
 	 */
-	onCreate?: (this: Session, id: string, content: TJSON) => void | Promise<void>
+	onCreate?: (this: Session, id: string, content: TJSON) => void | Promise<void> | any
 	/**
 	 * 当更新会话时触发
 	 * - 如果返回一个 Promise 则等待该 Promise 完成
@@ -64,7 +61,7 @@ export interface TConfig {
 			 */
 			newData: TJSON
 		}
-	) => void | Promise<void>
+	) => void | Promise<void> | any
 	/**
 	 * 当重新设置会话时触发
 	 * - 如果返回一个 Promise 则等待该 Promise 完成
@@ -72,7 +69,7 @@ export interface TConfig {
 	 * @param id 会话 ID
 	 * @param data 会话数据
 	 */
-	onSet?: (this: Session, id: string, data: TJSON) => void | Promise<void>
+	onSet?: (this: Session, id: string, data: TJSON) => void | Promise<void> | any
 	/**
 	 * 当删除会话时触发
 	 * - 如果返回一个 Promise 则等待该 Promise 完成
@@ -80,5 +77,5 @@ export interface TConfig {
 	 * @param id 会话 ID
 	 * @param data 会话数据
 	 */
-	onDelete?: (this: Session, id: string) => void | Promise<void>
+	onDelete?: (this: Session, id: string) => void | Promise<void> | any
 }

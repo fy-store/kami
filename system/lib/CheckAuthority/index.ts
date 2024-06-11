@@ -1,8 +1,6 @@
 import path from 'path'
 import { isType, readOnly } from 'assist-tools'
 import {
-	TRouter,
-	TRouterItem,
 	TConfig,
 	TRule,
 	TCheck,
@@ -12,8 +10,10 @@ import {
 	extractRouterKeys,
 	TParseRouter,
 	TParseRouterItem,
-	TCustomMatch
+	TCustomMatch,
+	TCheckWhiteListConfig
 } from './types/index.js'
+import output from '../output/index.js'
 
 const matchMap: TMatchMap = {
 	default(url, method, rule) {
@@ -189,7 +189,7 @@ class CheckAuthority<T extends TConfig> {
 	}
 
 	/**
-	 * 判断路由是否通过校验
+	 * 判断路由是否通过校验(验证路由规则配置和白名单配置)
 	 * @param config 配置对象
 	 */
 	check(config: TCheck<extractRouterKeys<T>>): boolean {
@@ -201,14 +201,15 @@ class CheckAuthority<T extends TConfig> {
 		if (isWhiteList) return true
 		const rules = this.#router[ruleName]
 		if (!rules) {
-			throw new Error(`CheckAuthority: check - route => "${String(ruleName)}" rules does not exist`)
+			output.warning(`CheckAuthority: check - route => "${String(ruleName)}" rules does not exist`)
+			return false
 		}
 		const result = rules.find((rule) => rule.match(url, method, { url: rule.url, method: rule.method }))
 		return !!result
 	}
 
 	/**
-	 * 判断路由是否通过路由规则校验
+	 * 判断路由是否通过路由规则校验(忽略白名单配置)
 	 * @param config 配置对象
 	 */
 	checkRoute(config: TCheck<extractRouterKeys<T>>): boolean {
@@ -216,7 +217,8 @@ class CheckAuthority<T extends TConfig> {
 		method = method.toUpperCase() as TMethod
 		const rules = this.#router[ruleName]
 		if (!rules) {
-			throw new Error(`CheckAuthority: checkRoute - route => "${String(ruleName)}" rules does not exist`)
+			output.warning(`CheckAuthority: checkRoute - route => "${String(ruleName)}" rules does not exist`)
+			return false
 		}
 		const result = rules.find((rule) => rule.match(url, method, { url: rule.url, method: rule.method }))
 		return !!result
@@ -226,7 +228,7 @@ class CheckAuthority<T extends TConfig> {
 	 * 判断路由是否通过白名单校验
 	 * @param config 配置对象
 	 */
-	checkWhiteList(config: TCheck<extractRouterKeys<T>>): boolean {
+	checkWhiteList(config: TCheckWhiteListConfig): boolean {
 		let { url, method } = config
 		method = method.toUpperCase() as TMethod
 		const isWhiteList = this.#whiteList.find((rule) =>
