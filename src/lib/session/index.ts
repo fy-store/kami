@@ -1,6 +1,5 @@
 import { Session, timedTask } from '#systemLib'
 import { session as sessionStore } from '#db'
-import { formatDate, readOnly } from 'assist-tools'
 
 const session = new Session({
 	async onCreate(id, content) {
@@ -25,10 +24,20 @@ sessionList[0].forEach((sessionItem) => {
 	session.load(sessionItem.id, sessionItem.content)
 })
 
-session.eatch(([id, content]) => {
-	console.log(id, content)
-})
+// 每晚两点定时清除已到期会话
+timedTask(
+	async () => {
+		const nowTimer = new Date().getTime()
+		const pArr = []
+		session.eatch(([id, content]) => {
+			if (new Date(content.lastActiveTime as string).getTime() + config.project.session.maxAge < nowTimer) {
+				// 会话已过期
+				pArr.push(session.delete(id))
+			}
+		})
 
-timedTask(() => {}, { hour: 2 })
-
+		await Promise.all(pArr)
+	},
+	{ hour: 2 }
+)
 export default session

@@ -67,7 +67,7 @@ const timedTask = (callback: Function, options?: TTimedTasksOptions) => {
 
 		ctx.timer = setTimeout(async () => {
 			try {
-				callback(clearTimer)
+				await callback(clearTimer)
 			} catch (error) {
 				console.error(error)
 			}

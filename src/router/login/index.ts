@@ -22,7 +22,13 @@ router.get('/', async (ctx) => {
 
 router.post('/', async (ctx) => {
 	if (ctx.request.body.account === account && ctx.request.body.password === password) {
-		const token = await session.create({ identity: 'admin', createTime: formatDate(new Date()) })
+		const token = await session.create({
+			identity: 'admin',
+			createTime: formatDate(new Date()),
+			lastActiveTime: formatDate(new Date())
+		})
+
+		// 此处直接将会话ID作为Token, 你也可以将会话ID进行加密, 或结合JWT等方案使用
 		ctx.body = {
 			code: 0,
 			msg: '登录成功',
@@ -35,6 +41,6 @@ router.post('/', async (ctx) => {
 
 	ctx.body = {
 		code: 1,
-		msg: '账号或密码有误, 请用 GET 访问 /api/login 获取测试账号和密码'
+		msg: `账号或密码有误, 请用 GET 访问 http://127.0.0.1:${config.system.project.port}/api/login 获取测试账号和密码`
 	}
 })

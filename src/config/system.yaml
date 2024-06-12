@@ -18,7 +18,7 @@ lib:
     # token有效时长, 单位秒 604800 <=> 7天
     effectiveTime: 604800
     # 验证 token 时是验证时间是否过期
-    verifyTime: true
+    verifyTime: false
 
 # 开发服务器配置
 dev:
