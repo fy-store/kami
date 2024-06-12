@@ -9,26 +9,32 @@ const account = 'root'
 const password = '123456'
 
 router.get('/', async (ctx) => {
+	const sessionList = []
+	session.eatch(([id, content]) => {
+		sessionList.push({ id, content })
+	})
 	ctx.body = {
 		code: 0,
 		msg: '测试账号和密码获取成功',
 		data: {
 			account,
 			password,
-			session: ctx.session
+			session: ctx.session,
+			sessionList
 		}
 	}
 })
 
 router.post('/', async (ctx) => {
 	if (ctx.request.body.account === account && ctx.request.body.password === password) {
+		const now = new Date()
 		const token = await session.create({
 			identity: 'admin',
-			createTime: formatDate(new Date()),
-			lastActiveTime: formatDate(new Date())
+			createTime: formatDate(now),
+			lastActiveTime: formatDate(now)
 		})
 
-		// 此处直接将会话ID作为Token, 你也可以将会话ID进行加密, 或结合JWT等方案使用
+		// 此处是直接将会话ID作为Token, 你也可以将会话ID进行加密, 或结合JWT等方案使用
 		ctx.body = {
 			code: 0,
 			msg: '登录成功',
