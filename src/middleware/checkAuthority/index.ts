@@ -56,7 +56,8 @@ export default () => {
 
 		// 活跃状态自动延长有效期
 		if (config.project.session.activeExtend) {
-			await session.update(ctx.sessionId, 'lastActiveTime', formatDate(now))
+			// 此处不等待, 让其异步执行
+			session.update(ctx.sessionId, 'lastActiveTime', formatDate(now))
 		}
 
 		const checkResult = checkAuthority.checkRoute({

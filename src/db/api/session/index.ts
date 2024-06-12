@@ -2,9 +2,10 @@
 
 import { execute } from '#dbConnect'
 import { TJSON } from '@system/lib/Session/types/index.js'
+import { db } from '#store'
 
-const name = 'session'
-export const create = async (id: string, content: TJSON) => {
+const name = db.sessionTable.name
+export const create = (id: string, content: TJSON) => {
 	const sql = `
         insert into ${name}(
             id, 
@@ -12,26 +13,26 @@ export const create = async (id: string, content: TJSON) => {
         ) 
         values(?, ?)
     `
-	return await execute(sql, [id, content])
+	return execute(sql, [id, content])
 }
 
-export const remove = async (sessionId: string) => {
+export const remove = (sessionId: string) => {
 	const sql = `
        update ${name} set deleteTime = from_unixtime(?) where id = ? and deleteTime is null
     `
-	return await execute(sql, [Date.now() / 1000, sessionId])
+	return execute(sql, [Date.now() / 1000, sessionId])
 }
 
-export const update = async (sessionId: string, sessionContent: TJSON) => {
+export const update = (sessionId: string, sessionContent: TJSON) => {
 	const sql = `
        update ${name} set content = ? where id = ? and deleteTime is null
     `
-	return await execute(sql, [sessionContent, sessionId])
+	return execute(sql, [sessionContent, sessionId])
 }
 
-export const get = async () => {
+export const get = () => {
 	const sql = `
         select id, content from ${name} where deleteTime is null
     `
-	return await execute(sql)
+	return execute(sql)
 }

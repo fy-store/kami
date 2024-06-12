@@ -21,7 +21,8 @@
 			"#router": ["./src/router/index.ts"],
 			"#middleware": ["./src/middleware/index.ts"],
 			"#db": ["./src/db/api/index.ts"],
-			"#dbConnect": ["./src/db/connect/index.ts"]
+			"#dbConnect": ["./src/db/connect/index.ts"],
+			"#store": ["./src/store/index.ts"]
 		}
 	},
 	"lib": ["esnext", "NodeNext"],
