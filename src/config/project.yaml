@@ -10,3 +10,8 @@ session:
   maxAge: 21600000
   # 活跃状态自动延长
   activeExtend: true
+
+# 初始账号密码
+root:
+  account: "root"
+  password: "123456"

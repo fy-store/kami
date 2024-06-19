@@ -88,6 +88,14 @@ declare global {
 				 */
 				activeExtend: boolean
 			}
+
+			/**
+			 * 初始账号和密码
+			 */
+			root: {
+				account: string
+				password: string
+			}
 		}
 
 		/**
