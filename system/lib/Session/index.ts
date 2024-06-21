@@ -1,21 +1,21 @@
 import { nanoid } from 'nanoid'
 import { isType, readOnly } from 'assist-tools'
 import { set, type PropertyPath } from 'lodash-es'
-import { TConfig, TEatch, TJSON } from './types/index.js'
+import { TBasics, TConfig, TEatch, TJSON } from './types/index.js'
 
-export default class Session {
-	#config: TConfig
-	#sessionStore = new Map<string, Record<string, any>>()
+export default class Session<T extends TJSON> {
+	#config: TConfig<T>
+	#sessionStore = new Map<string, T>()
 
 	get sessionStore() {
-		return readOnly(this.#sessionStore, { unReadOnly: true, sign: this.#config.sign })
+		return readOnly(this.#sessionStore, { mode: 'looseFitting', unReadOnly: true, sign: this.#config.sign })
 	}
 
 	/**
 	 * 创建一个会话实例
 	 * @param sign 实例唯一标识
 	 */
-	constructor(config: TConfig = {}) {
+	constructor(config: TConfig<T> = {}) {
 		this.#config = config
 		if (!Object.hasOwn(config, 'sign')) {
 			this.#config.sign = Symbol()
@@ -36,7 +36,7 @@ export default class Session {
 		}
 	}
 
-	#cloneData<T extends TJSON>(content: T): T {
+	#cloneData<T>(content: T): T {
 		const type = isType(content)
 		if (!(type === 'array' || type === 'object')) {
 			throw new TypeError(`"content" must be an array or object !`)
@@ -49,7 +49,7 @@ export default class Session {
 	 * @param content 会话内容
 	 * @returns 会话 ID
 	 */
-	async create(content: TJSON = {}) {
+	async create(content: T = {} as T) {
 		const newContent = this.#cloneData(content)
 		const id = this.#createId()
 		if (this.#config.onCreate) {
@@ -59,7 +59,7 @@ export default class Session {
 		return id
 	}
 
-	#get(id: string): null | TJSON {
+	#get(id: string): T | null {
 		if (!this.#sessionStore.has(id)) {
 			return null
 		}
@@ -72,9 +72,9 @@ export default class Session {
 	 * @param id 会话 ID
 	 * @returns 会话内容, 如果未找到该会话则返回 null
 	 */
-	get(id: string): null | TJSON {
+	get(id: string): T | null {
 		const data = this.#get(id)
-		return data ? readOnly(data, { unReadOnly: true, sign: this.#config.sign }) : data
+		return data ? readOnly(data, { mode: 'looseFitting', unReadOnly: true, sign: this.#config.sign }) : data
 	}
 
 	/**
@@ -84,11 +84,11 @@ export default class Session {
 	 * @param value 新的内容
 	 * @returns 更新后的会话
 	 */
-	async update(id: string, prop: PropertyPath, value: TJSON | number | string | boolean | null) {
+	async update(id: string, prop: PropertyPath, value: TBasics | TJSON): Promise<T> {
 		const type = isType(value)
-		let content: unknown
+		let content: TBasics | TJSON
 		if (type === 'array' || type === 'object') {
-			content = this.#cloneData(value as TJSON)
+			content = this.#cloneData(value)
 		} else {
 			const allow = ['number', 'string', 'boolean', 'null']
 			if (!allow.includes(type)) {
@@ -102,12 +102,12 @@ export default class Session {
 			throw new Error(`sessionStore is not a session "${String(id)}" !`)
 		}
 		if (this.#config.onUpdate) {
-			let newData: TJSON
+			let newData: T
 			const self = this
 			await this.#config.onUpdate.call(this, {
 				id,
 				prop,
-				value: content as string | number | boolean | TJSON,
+				value: content,
 				originData,
 				get newData() {
 					if (!newData) {
@@ -130,7 +130,7 @@ export default class Session {
 	 * @param data 新的数据
 	 * @returns 新的会话
 	 */
-	async set(id: string, data: TJSON) {
+	async set(id: string, data: T) {
 		const newData = this.#cloneData(data)
 		if (this.#config.onSet) {
 			await this.#config.onSet.call(this, id, newData)
@@ -157,7 +157,7 @@ export default class Session {
 	 * @param content 会话内容
 	 * @returns 会话 ID
 	 */
-	load(id: string, content: TJSON) {
+	load(id: string, content: T) {
 		if (this.get(id)) {
 			throw new Error(`The ${id} is already exists !`)
 		}
@@ -171,13 +171,13 @@ export default class Session {
 	 * 迭代会话仓库
 	 * @param callback 回调函数
 	 */
-	eatch(callback: TEatch) {
+	eatch(callback: TEatch<T>) {
 		Array.from(this.#sessionStore).forEach((value, index) => {
 			callback.call(
 				this,
-				readOnly(value, { sign: this.#config.sign, unReadOnly: true }),
+				readOnly(value, { mode: 'looseFitting', sign: this.#config.sign, unReadOnly: true }),
 				index,
-				readOnly(this.#sessionStore, { sign: this.#config.sign, unReadOnly: true })
+				readOnly(this.#sessionStore, { mode: 'looseFitting', sign: this.#config.sign, unReadOnly: true })
 			)
 		})
 		return this

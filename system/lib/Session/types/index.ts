@@ -1,24 +1,41 @@
 import { type PropertyPath } from 'lodash-es'
 import Session from '../index.js'
 
-export interface TJSON {
-	[key: string | number]: string | number | boolean | null | TJSON
+/**
+ * 基本数据类型
+ */
+export type TBasics = string | number | boolean | null
+
+/**
+ * 数组类型
+ */
+export type TArr = (TBasics | TObj | TArr)[]
+/**
+ * 对象类型
+ */
+export type TObj = {
+	[key: string | number]: TBasics | TArr | TObj
 }
+
+/**
+ * JSON类型
+ */
+export type TJSON = TArr | TObj
 
 /**
  * 迭代回调函数
  */
-export type TEatch = (
-	this: Session,
-	value: [string, TJSON],
+export type TEatch<T extends TJSON> = (
+	this: Session<T>,
+	value: [string, T],
 	index: number,
-	sessionStore: Map<string, Record<string, any>>
+	sessionStore: Map<string, T>
 ) => void
 
 /**
  * 配置对象
  */
-export interface TConfig {
+export interface TConfig<T extends TJSON> {
 	/**
 	 * 当前实例唯一标识
 	 */
@@ -30,7 +47,7 @@ export interface TConfig {
 	 * @param id 会话 ID
 	 * @param content 会话内容
 	 */
-	onCreate?: (this: Session, id: string, content: TJSON) => void | Promise<void> | any
+	onCreate?: (this: this, id: string, content: T) => void | Promise<void>
 	/**
 	 * 当更新会话时触发
 	 * - 如果返回一个 Promise 则等待该 Promise 完成
@@ -38,7 +55,7 @@ export interface TConfig {
 	 * @param ctx 上下文对象
 	 */
 	onUpdate?: (
-		this: Session,
+		this: Session<T>,
 		ctx: {
 			/**
 			 * 会话 ID
@@ -55,13 +72,13 @@ export interface TConfig {
 			/**
 			 * 旧的值
 			 */
-			originData: TJSON
+			originData: T
 			/**
 			 * 新的值
 			 */
-			newData: TJSON
+			newData: T
 		}
-	) => void | Promise<void> | any
+	) => void | Promise<void>
 	/**
 	 * 当重新设置会话时触发
 	 * - 如果返回一个 Promise 则等待该 Promise 完成
@@ -69,7 +86,7 @@ export interface TConfig {
 	 * @param id 会话 ID
 	 * @param data 会话数据
 	 */
-	onSet?: (this: Session, id: string, data: TJSON) => void | Promise<void> | any
+	onSet?: (this: Session<T>, id: string, data: T) => void | Promise<void>
 	/**
 	 * 当删除会话时触发
 	 * - 如果返回一个 Promise 则等待该 Promise 完成
@@ -77,5 +94,5 @@ export interface TConfig {
 	 * @param id 会话 ID
 	 * @param data 会话数据
 	 */
-	onDelete?: (this: Session, id: string) => void | Promise<void> | any
+	onDelete?: (this: Session<T>, id: string) => void | Promise<void>
 }
