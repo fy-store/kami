@@ -88,6 +88,23 @@ declare global {
 				 */
 				activeExtend: boolean
 			}
+			/**
+			 * ip 名单配置, 在时间范围内且达到最大访问次数则标记为频繁访问, 若在时间范围内且达到 deathCount 则进行拉黑处理
+			 */
+			ipList: {
+				/**
+				 * 时间范围(单位毫秒), 1秒
+				 */
+				maxAge: number
+				/**
+				 * 最大访问次数
+				 */
+				maxCount: number
+				/**
+				 * 最大拉黑访问次数
+				 */
+				deathCount: number
+			}
 
 			/**
 			 * 初始账号和密码
