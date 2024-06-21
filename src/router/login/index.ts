@@ -8,6 +8,7 @@ const router = new Router({ prefix: '/login' })
 export default router
 
 router.get('/', async (ctx) => {
+	ctx.container.ipSession.content
 	const sessionList = []
 	session.eatch(([id, content]) => {
 		sessionList.push({ id, content })
@@ -16,8 +17,9 @@ router.get('/', async (ctx) => {
 		code: 0,
 		msg: '测试账号和密码获取成功',
 		data: {
+			ip: ctx.ip.startsWith('::ffff:') ? ctx.ip.replaceAll('::ffff:', '') : ctx.ip,
 			...config.project.root,
-			session: ctx.session,
+			session: ctx.container.userSession.content,
 			sessionList
 		}
 	}
@@ -54,12 +56,21 @@ router.post('/', async (ctx) => {
 		return
 	}
 
+	const userSession = session.get(ctx.container.userSession.id)
+	let token: string
 	const now = new Date()
-	const token = await session.create({
-		identity: 'admin',
-		createTime: formatDate(now),
-		lastActiveTime: formatDate(now)
-	})
+	// 如果登录携带了 token 则直接返回 token
+	if (userSession && userSession.id === info.id) {
+		session.update(ctx.container.userSession.id, 'lastActiveTime', formatDate(now))
+		token = ctx.container.userSession.id
+	} else {
+		token = await session.create({
+			id: info.id,
+			identity: 'admin',
+			createTime: formatDate(now),
+			lastActiveTime: formatDate(now)
+		})
+	}
 
 	ctx.body = {
 		code: 0,

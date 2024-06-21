@@ -1,6 +1,6 @@
 import { db } from '#store'
 const {
-	sessionTable: { idLenght, name }
+	ipListSessionTable: { idLenght, name }
 } = db
 
 export default `create table if not exists ${name} (

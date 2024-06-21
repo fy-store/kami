@@ -9,6 +9,14 @@ export const sessionTable = readOnly({
 })
 
 /**
+ * ip会话表配置
+ */
+export const ipListSessionTable = readOnly({
+	name: 'ipList',
+	idLenght: 50
+})
+
+/**
  * 管理员表配置
  */
 export const adminTable = readOnly({

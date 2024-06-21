@@ -1,9 +1,9 @@
 import { db } from '#store'
 const {
-	adminTable: { accountLength, passwordLength }
+	adminTable: { accountLength, passwordLength, name }
 } = db
 
-export default ` create table if not exists admin(
+export default ` create table if not exists ${name}(
     id int auto_increment primary key,
     account varchar(${accountLength}) not null comment '账号',
     password varchar(${passwordLength}) not null comment '密码',

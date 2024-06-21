@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+	</head>
+	<body>
+		<button class="get-info">获取信息</button>
+		<pre class="content"></pre>
+
+		<script type="module">
+			const $ = (el) => document.querySelector(el)
+
+			const btn = $('.get-info')
+			const content = $('.content')
+			btn.addEventListener('click', () => {
+				const myHeaders = new Headers()
+				myHeaders.append('User-Agent', 'Apifox/1.0.0 (https://apifox.com)')
+				myHeaders.append('Authorization', 'oL9js8uzNTFw9XbnQUET7')
+
+				const requestOptions = {
+					method: 'GET',
+					headers: myHeaders,
+					redirect: 'follow'
+				}
+
+				fetch('http://192.168.233.147:3323/api/login', requestOptions)
+					.then((response) => response.json())
+					.then((result) => {
+						content.textContent = JSON.stringify(result, null, 4)
+					})
+					.catch((error) => console.log('error', error))
+			})
+		</script>
+	</body>
+</html>

@@ -1,7 +1,16 @@
+import { type TBasics, type TJSON } from '@system/lib/Session/types/index.js'
 import { Session, timedTask } from '#systemLib'
 import { session as sessionStore } from '#db'
 
-const session = new Session({
+export type TContent = {
+	id: number
+	identity: 'admin' | 'user'
+	createTime: string
+	lastActiveTime: string
+	[key: string]: TBasics | TJSON
+}
+
+export const session = new Session<TContent>({
 	async onCreate(id, content) {
 		await sessionStore.create(id, content)
 	},
@@ -30,7 +39,7 @@ timedTask(
 		const nowTimer = new Date().getTime()
 		const pArr = []
 		session.eatch(([id, content]) => {
-			if (new Date(content.lastActiveTime as string).getTime() + config.project.session.maxAge < nowTimer) {
+			if (new Date(content.lastActiveTime).getTime() + config.project.session.maxAge < nowTimer) {
 				// 会话已过期
 				pArr.push(session.delete(id))
 			}
