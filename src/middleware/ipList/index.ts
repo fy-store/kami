@@ -4,9 +4,15 @@ import { ipList as sessionStore } from '#db'
 import { cloneDeep } from 'assist-tools'
 
 export type TSessionContent = {
+	/** 创建时间 */
 	createTime: number
+	/** 是否在黑名单内 */
 	blacklist: boolean
-	access: { endTime: number }[]
+	/** 访问信息 */
+	access: {
+		/** 销毁时间 */
+		endTime: number
+	}[]
 }
 export const session = new Session<TSessionContent>()
 
