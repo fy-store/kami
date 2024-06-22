@@ -4,7 +4,7 @@ import koaStatic from 'koa-static'
 import { bodyParser } from '@koa/bodyparser'
 import router from '#router'
 import { routeError } from '#lib'
-import { extendCtx, checkAuthority, ipList } from '#middleware'
+import { extendCtx, checkAuthority, ipList, ipAbnormal } from '#middleware'
 import path from 'path'
 
 export default (ctx: TInitedCtx) => {
@@ -16,5 +16,6 @@ export default (ctx: TInitedCtx) => {
 	app.use(bodyParser()) // body 参数解析
 	app.use(koaStatic(path.join(systemConfig.rootPath, config.project.webPath))) // 前端静态资源
 	app.use(checkAuthority()) // 权限验证
+	app.use(ipAbnormal()) // ip 异常校验
 	app.use(router.routes()) // 使用路由
 }

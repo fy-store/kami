@@ -6,31 +6,46 @@
 		<title>Document</title>
 	</head>
 	<body>
+		<button class="login">登录</button>
 		<button class="get-info">获取信息</button>
 		<pre class="content"></pre>
 
 		<script type="module">
 			const $ = (el) => document.querySelector(el)
 
+			const url = 'http://192.168.72.1:3323'
 			const btn = $('.get-info')
 			const content = $('.content')
 			btn.addEventListener('click', () => {
-				const myHeaders = new Headers()
-				myHeaders.append('User-Agent', 'Apifox/1.0.0 (https://apifox.com)')
-				myHeaders.append('Authorization', 'oL9js8uzNTFw9XbnQUET7')
-
-				const requestOptions = {
+				fetch(`${url}/api/login`, {
 					method: 'GET',
-					headers: myHeaders,
-					redirect: 'follow'
-				}
-
-				fetch('http://192.168.233.147:3323/api/login', requestOptions)
+					headers: {
+						Authorization: localStorage.getItem('token')
+					}
+				})
 					.then((response) => response.json())
 					.then((result) => {
 						content.textContent = JSON.stringify(result, null, 4)
 					})
 					.catch((error) => console.log('error', error))
+			})
+
+			$('.login').addEventListener('click', async () => {
+				const res = await fetch(`${url}/api/login`, {
+					method: 'POST',
+					headers: {
+						'content-type': 'application/json'
+					},
+					body: JSON.stringify({
+						account: 'root',
+						password: '123456'
+					})
+				}).then((res) => res.json())
+
+				console.log(res)
+				if (res?.data.token) {
+					localStorage.setItem('token', res.data.token)
+				}
 			})
 		</script>
 	</body>
