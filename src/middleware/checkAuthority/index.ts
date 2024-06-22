@@ -23,6 +23,9 @@ const checkAuthority = new CheckAuthority({
 	]
 })
 
+/**
+ * 权限校验中间件
+ */
 export default () => {
 	return async (ctx: Context, next: Next) => {
 		ctx.container.userSession = {

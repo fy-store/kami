@@ -21,6 +21,12 @@ sessionList[0].forEach((sessionItem) => {
 	session.load(sessionItem.id, sessionItem.content)
 })
 
+/**
+ * ip记录中间件
+ * - 记录ip
+ * - 请求频率限制
+ * - 拦截黑名单
+ */
 export default () => {
 	return async (ctx: Context, next: Next) => {
 		let ipSession = session.get(ctx.ip)
