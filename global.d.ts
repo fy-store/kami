@@ -80,20 +80,24 @@ declare global {
 			 */
 			session: {
 				/**
-				 * 有效时间(单位毫秒), 6小时
+				 * 有效时间(单位毫秒)
 				 */
 				maxAge: number
 				/**
 				 * 活跃状态自动延长
 				 */
 				activeExtend: boolean
+				/**
+				 * 同个账号最大同时登录设备
+				 */
+				accountActiveNum: number
 			}
 			/**
 			 * ip 名单配置, 在时间范围内且达到最大访问次数则标记为频繁访问, 若在时间范围内且达到 deathCount 则进行拉黑处理
 			 */
 			ipList: {
 				/**
-				 * 时间范围(单位毫秒), 1秒
+				 * 时间范围(单位毫秒)
 				 */
 				maxAge: number
 				/**

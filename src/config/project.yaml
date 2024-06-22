@@ -4,12 +4,14 @@ api: "/api"
 # 前端静态资源
 webPath: "/src/public/dist"
 
-# session 配置
+# 用户会话配置
 session:
   # 有效时间(单位毫秒), 6小时
   maxAge: 21600000
   # 活跃状态自动延长
   activeExtend: true
+  # 同个账号最大同时登录设备
+  accountActiveNum: 2
 
 # ip 名单配置, 在时间范围内且达到最大访问次数则标记为频繁访问, 若在时间范围内且达到 deathCount 则进行拉黑处理
 ipList:

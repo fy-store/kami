@@ -1,5 +1,5 @@
 import Router from 'koa-router'
-import { session, check } from '#lib'
+import { check } from '#lib'
 import { hash } from '#systemLib'
 import { admin } from '#db'
 import { formatDate } from 'assist-tools'
@@ -8,9 +8,8 @@ const router = new Router({ prefix: '/login' })
 export default router
 
 router.get('/', async (ctx) => {
-	ctx.container.ipSession.content
 	const sessionList = []
-	session.eatch(([id, content]) => {
+	ctx.container.userSession.session.eatch(([id, content]) => {
 		sessionList.push({ id, content })
 	})
 	ctx.body = {
@@ -56,16 +55,37 @@ router.post('/', async (ctx) => {
 		return
 	}
 
-	const userSession = session.get(ctx.container.userSession.id)
+	const { id: sessionId, session } = ctx.container.userSession
+	const userSession = session.get(sessionId)
 	let token: string
 	const now = new Date()
 	// 如果登录携带了 token 则直接返回 token
 	if (userSession && userSession.id === info.id) {
-		session.update(ctx.container.userSession.id, 'lastActiveTime', formatDate(now))
-		token = ctx.container.userSession.id
+		config.project.session.activeExtend && session.update(sessionId, 'lastActiveTime', formatDate(now)) // 续活token
+		token = sessionId
 	} else {
+		const activeSession = []
+		session.eatch(([, content]) => {
+			if (
+				content.id === info.id &&
+				new Date(content.lastActiveTime).getTime() + config.project.session.maxAge > now.getTime()
+			) {
+				activeSession.push(content)
+			}
+		})
+
+		if (activeSession.length >= config.project.session.accountActiveNum) {
+			console.log(activeSession)
+			ctx.body = {
+				code: 1,
+				msg: `同个账号最多${config.project.session.accountActiveNum}个设备同时在线`
+			}
+			return
+		}
+
 		token = await session.create({
 			id: info.id,
+			ip: ctx.ip,
 			identity: 'admin',
 			createTime: formatDate(now),
 			lastActiveTime: formatDate(now)

@@ -3,10 +3,16 @@ import { Session, timedTask } from '#systemLib'
 import { session as sessionStore } from '#db'
 
 export type TContent = {
+	/** 用户id */
 	id: number
+	/** 用户身份 */
 	identity: 'admin' | 'user'
+	/** 创建时间 */
 	createTime: string
+	/** 最后活跃时间 */
 	lastActiveTime: string
+	/** 用户ip */
+	ip: string
 	[key: string]: TBasics | TJSON
 }
 

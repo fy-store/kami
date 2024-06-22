@@ -3,7 +3,7 @@
  */
 
 import { type TSessionContent as TIpSessionContent, type session as ipSession } from '@/middleware/ipList/index.ts'
-import { type TContent as TUserSessionContent, type session as userSession } from '@/lib/session/index.ts'
+import { type TContent as TUserSessionContent, type session as userSession } from '@/middleware/checkAuthority/session.ts'
 
 export interface Container {
 	/**
