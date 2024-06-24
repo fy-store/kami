@@ -41,7 +41,7 @@ export default () => {
 		}
 
 		// 不在白名单内则验证会话和路由权限
-		if (!ctx.session) {
+		if (!ctx.container.userSession.content) {
 			// 会话不存在
 			ctx.body = {
 				code: 401,
@@ -58,7 +58,7 @@ export default () => {
 			// 会话已过期
 			ctx.body = {
 				code: 401,
-				msg: '登录过期'
+				msg: '登录过期 .'
 			}
 			return
 		}
