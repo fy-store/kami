@@ -1,5 +1,4 @@
 import Check from '../Check.js'
-import required from './required.js'
 import { isType } from 'assist-tools'
 
 /**
@@ -13,7 +12,6 @@ import { isType } from 'assist-tools'
  * @returns 存在返回 实例对象, 否则将抛出错误
  */
 export default function (obj: object, key: string | number | symbol, min: number, max: number): Check {
-	required(obj, key)
 	if (!['string', 'array'].includes(isType(obj[key]))) {
 		throw new TypeError(`The type is not within the allowed range, only allowed string and array !`)
 	}

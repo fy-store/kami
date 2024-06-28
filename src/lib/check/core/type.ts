@@ -1,6 +1,5 @@
 import { TAllow } from '../types/type.js'
 import Check from '../Check.js'
-import required from './required.js'
 import { isType, isStrNum } from 'assist-tools'
 
 const allowType = {
@@ -48,7 +47,6 @@ const allowType = {
  * @returns 存在返回 实例对象, 否则将抛出错误
  */
 export default function (obj: object, key: string | number | symbol, type: TAllow): Check {
-	required(obj, key)
 	if (!Object.hasOwn(allowType, type)) {
 		throw new TypeError(`Unknown usage of "type", expected type ${Object.keys(type).join(', ')}`)
 	}
