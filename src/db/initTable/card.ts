@@ -18,5 +18,6 @@ export default `create table if not exists ${name}(
     index(token),
     index(createTime),
     index(title),
-    index(state)
+    index(state),
+    index(deleteTime)
 )`
