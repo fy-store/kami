@@ -1,4 +1,4 @@
-import Check from '../Check.js'
+import Check from '../index.js'
 import { isType } from 'assist-tools'
 
 /**
@@ -20,5 +20,5 @@ export default function (obj: object, key: string | number | symbol, min: number
 		return this
 	}
 
-	throw new Error(`Length_mismatch !`)
+	throw new Error(`Length mismatch !`)
 }

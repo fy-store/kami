@@ -1,8 +1,8 @@
 import { TAllow } from '../types/type.js'
-import Check from '../Check.js'
+import Check from '../index.js'
 import { isType, isStrNum } from 'assist-tools'
 
-const allowType = {
+export const allowType = {
 	string(data: unknown) {
 		return isType(data) === 'string'
 	},
@@ -46,18 +46,21 @@ const allowType = {
  * @param type 指定的类型
  * @returns 存在返回 实例对象, 否则将抛出错误
  */
-export default function (obj: object, key: string | number | symbol, type: TAllow): Check {
-	if (!Object.hasOwn(allowType, type)) {
-		throw new TypeError(`Unknown usage of "type", expected type ${Object.keys(type).join(', ')}`)
+export default function (obj: object, key: string | number | symbol, type: TAllow | TAllow[]): Check {
+	if (!Array.isArray(type)) {
+		type = [type]
 	}
 
-	try {
-		if (!allowType[type](obj[key])) {
-			throw new Error(`Type error !`)
+	for (const t of type) {
+		if (!Object.hasOwn(allowType, t)) {
+			throw new TypeError(`Unknown usage of "type", expected type ${Object.keys(type).join(', ')}`)
 		}
-	} catch (error) {
-		throw new Error(`Type error !`)
 	}
 
-	return this
+	const result = type.some((item) => allowType[item](obj[key]))
+	if (result) {
+		return this
+	}
+
+	throw new Error(`The "type" is not within the specified range !`)
 }

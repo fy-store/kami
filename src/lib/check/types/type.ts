@@ -1,4 +1,5 @@
 export type TAllow =
+	| '*'
 	| 'number'
 	| 'string'
 	| 'numberString'
