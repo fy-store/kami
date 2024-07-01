@@ -25,3 +25,14 @@ export const adminTable = readOnly({
 	/** 密码会被加密, 需要预留大一些 */
 	passwordLength: 255
 })
+
+/**
+ * 卡密表配置
+ */
+export const cardTable = readOnly({
+	name: 'card',
+	tokenLength: 255,
+	titleLength: 255,
+	descLength: 255,
+	stateLength: 1
+})
