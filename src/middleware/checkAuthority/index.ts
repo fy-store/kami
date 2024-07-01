@@ -19,6 +19,11 @@ const checkAuthority = new CheckAuthority({
 			method: '*',
 			url: '/login',
 			match: 'startWith'
+		},
+		{
+			method: 'POST',
+			url: '/logout',
+			match: 'startWith'
 		}
 	]
 })
