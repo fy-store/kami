@@ -2,23 +2,30 @@ import Router from 'koa-router'
 import xss from 'xss'
 import { hash } from '#systemLib'
 import { admin } from '#db'
-import { isString, formatDate } from 'assist-tools'
+import { postCheck } from './check.js'
+import { formatDate } from 'assist-tools'
 
 const router = new Router({ prefix: '/admin' })
 export default router
 
 router.post('/', async (ctx) => {
-	let { account, password } = ctx.request.body
-	if (!isString(account, password)) {
+	const body = ctx.request.body
+	type State = { account: string; password: string }
+	let state: State
+	try {
+		const result = postCheck.verify<State>(body)
+		state = result.state
+	} catch (error) {
+		console.log(error)
 		ctx.body = {
 			code: 1,
-			msg: '参数错误'
+			msg: '参数有误'
 		}
 		return
 	}
 
-	account = xss(account).trim()
-	password = await hash.encryp(xss(password).trim())
+	const account = xss(state.account)
+	const password = await hash.encryp(xss(state.password))
 
 	const [adminInfo] = await admin.queryByAccount(account)
 	if (adminInfo.length) {
@@ -33,7 +40,10 @@ router.post('/', async (ctx) => {
 
 	ctx.body = {
 		code: 0,
-		msg: '账号创建成功'
+		msg: '账号创建成功',
+		data: {
+			account
+		}
 	}
 })
 

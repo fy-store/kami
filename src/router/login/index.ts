@@ -1,5 +1,5 @@
 import Router from 'koa-router'
-import { check } from '#lib'
+import { postCheck } from './check.js'
 import { hash } from '#systemLib'
 import { admin } from '#db'
 import { formatDate } from 'assist-tools'
@@ -30,19 +30,17 @@ router.post('/', async (ctx) => {
 		msg: '账号或密码有误'
 	}
 
+	type State = { account: string; password: string }
+	let state: State
 	try {
-		const body = ctx.request.body
-		check
-			.required(body, 'account')
-			.required(body, 'password')
-			.type(body, 'account', 'string')
-			.type(body, 'password', 'string')
+		const result = postCheck.verify<State>(ctx.request.body)
+		state = result.state
 	} catch (error) {
 		ctx.body = err
 		return
 	}
 
-	const { account, password } = ctx.request.body
+	const { account, password } = state
 	const [[info]] = await admin.queryByAccount(account)
 	if (!info) {
 		ctx.body = err
@@ -75,7 +73,6 @@ router.post('/', async (ctx) => {
 		})
 
 		if (activeSession.length >= config.project.session.accountActiveNum) {
-			console.log(activeSession)
 			ctx.body = {
 				code: 1,
 				msg: `同个账号最多${config.project.session.accountActiveNum}个设备同时在线`
