@@ -11,7 +11,12 @@ import { isType } from 'assist-tools'
  * @param max 最大长度
  * @returns 存在返回 实例对象, 否则将抛出错误
  */
-export default function (obj: object, key: string | number | symbol, min: number, max: number): typeof Check {
+export default function (
+	obj: { [k: string | number | symbol]: any },
+	key: string | number | symbol,
+	min: number,
+	max: number
+): typeof Check {
 	if (!['string', 'array'].includes(isType(obj[key]))) {
 		throw new TypeError(`The type is not within the allowed range, only allowed string and array !`)
 	}

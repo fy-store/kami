@@ -6,40 +6,49 @@ import { isType } from 'assist-tools'
 import { allowType } from './core/type.js'
 
 const runIf = {
-	required(item, data) {
+	required<TState, TData>(
+		item: TParseConfig<TState, TData>,
+		data: TData,
+		_rule: RemoveType<keyof TParseConfig<TState, TData>, 'fixed'>
+	) {
 		if (item.required.expect) {
 			required(data, item.fixed)
 		}
 	},
-	type(item, data) {
+	type<TState, TData>(
+		item: TParseConfig<TState, TData>,
+		data: TData,
+		_rule: RemoveType<keyof TParseConfig<TState, TData>, 'fixed'>
+	) {
 		if (item.type.expect === '*') {
 			return
 		}
 		typeFun(data, item.fixed, item.type.expect)
 	},
-	length(item, data) {
+	length<TState, TData>(
+		item: TParseConfig<TState, TData>,
+		data: TData,
+		_rule: RemoveType<keyof TParseConfig<TState, TData>, 'fixed'>
+	) {
 		if (item.length.expect) {
 			length(data, item.fixed, item.length.expect.min, item.length.expect.max)
 		}
 	}
-} as {
-	[k in RemoveType<keyof TParseConfig, 'fixed'>]: (
-		item: TParseConfig,
-		data: object,
-		rule: RemoveType<keyof TParseConfig, 'fixed'>
-	) => void
 }
 
 /**
  * 校验器
  */
-export default class Check<T extends TConfig[]> {
+export default class Check<
+	TState = { [k: string | number | symbol]: any },
+	TData = { [k: string | number | symbol]: any }
+> {
 	static required = required
 	static type = typeFun
 	static length = length
-	#config: TParseConfig[]
-	#runSort: RemoveType<keyof TParseConfig, 'fixed'>[] = ['required', 'type', 'length']
-	#options: TOptions = {}
+	#config: TParseConfig<TState, TData>[]
+	#runSort: RemoveType<keyof TParseConfig<TState, TData>, 'fixed'>[] = ['required', 'type', 'length']
+	#options: TOptions<TState, TData> = {}
 	get options() {
 		return this.#options
 	}
@@ -49,12 +58,12 @@ export default class Check<T extends TConfig[]> {
 	 * @param config 规则数组
 	 * @param options 配置选项
 	 */
-	constructor(config: T, options: TOptions = {}) {
+	constructor(config: TConfig<TState, TData>[], options: TOptions<TState, TData> = {}) {
 		if (isType(config) !== 'array') {
 			throw new TypeError('"config" must be an array !')
 		}
 
-		const newConfig: TParseConfig[] = []
+		const newConfig: TParseConfig<TState, TData>[] = []
 		for (const item of config) {
 			if (isType(item) !== 'object') {
 				throw new TypeError(`Each "item" in "config" must be an object !`)
@@ -74,7 +83,7 @@ export default class Check<T extends TConfig[]> {
 			})
 		}
 
-		this.#config = newConfig as TParseConfig[]
+		this.#config = newConfig as TParseConfig<TState, TData>[]
 
 		if (isType(options) !== 'object') {
 			throw new TypeError('"options" must be an object !')
@@ -82,7 +91,7 @@ export default class Check<T extends TConfig[]> {
 		this.#options = options
 	}
 
-	#initRequired(required: any, _config: TConfig): TParseConfig['required'] {
+	#initRequired(required: any, _config: TConfig<TState, TData>): TParseConfig<TState, TData>['required'] {
 		if (isType(required) !== 'object') {
 			return {
 				expect: !!required
@@ -92,7 +101,7 @@ export default class Check<T extends TConfig[]> {
 		return required
 	}
 
-	#initType(type: any, config: TConfig): TParseConfig['type'] {
+	#initType(type: any, config: TConfig<TState, TData>): TParseConfig<TState, TData>['type'] {
 		if (isType(type) !== 'object') {
 			if (type === '*') {
 				return {
@@ -116,7 +125,7 @@ export default class Check<T extends TConfig[]> {
 		return type
 	}
 
-	#initLength(length: any, _config: TConfig): TParseConfig['length'] {
+	#initLength(length: any, _config: TConfig<TState, TData>): TParseConfig<TState, TData>['length'] {
 		if (length === void 0) {
 			return {
 				expect: void 0
@@ -136,7 +145,7 @@ export default class Check<T extends TConfig[]> {
 	 * @param data 一个对象
 	 * @returns 返回一个 Promise
 	 */
-	async verifyAsync<State = object, Data = object>(data: Data) {
+	async verifyAsync<State extends TState = TState, Data extends TData = TData>(data: Data) {
 		if (isType(data) !== 'object') {
 			throw new TypeError('"data" must be an object !')
 		}
@@ -162,7 +171,7 @@ export default class Check<T extends TConfig[]> {
 				const config = item[rule]
 				try {
 					config.onBefore && (await config.onBefore(ctx))
-					runIf[rule](item, data as object, rule)
+					runIf[rule]<TState, TData>(item, data, rule)
 					config.onSuccess && (await config.onSuccess(ctx))
 				} catch (error) {
 					ctx.error = error
@@ -198,7 +207,7 @@ export default class Check<T extends TConfig[]> {
 	 * @param data 一个对象
 	 * @returns 有误则抛出错误
 	 */
-	verify<State = object, Data = object>(data: Data) {
+	verify<State extends TState = TState, Data extends TData = TData>(data: Data) {
 		if (isType(data) !== 'object') {
 			throw new TypeError('"data" must be an object !')
 		}
@@ -224,7 +233,7 @@ export default class Check<T extends TConfig[]> {
 				const config = item[rule]
 				try {
 					config.onBefore && config.onBefore(ctx)
-					runIf[rule](item, data as object, rule)
+					runIf[rule](item, data, rule)
 					config.onSuccess && config.onSuccess(ctx)
 				} catch (error) {
 					ctx.error = error
