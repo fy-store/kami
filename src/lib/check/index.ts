@@ -195,7 +195,7 @@ export default class Check<
 
 		return {
 			state,
-			data,
+			data: data as TData,
 			fixed: null,
 			error: null
 		}
@@ -256,7 +256,7 @@ export default class Check<
 			})
 		return {
 			state,
-			data,
+			data: data as TData,
 			fixed: null,
 			error: null
 		}
