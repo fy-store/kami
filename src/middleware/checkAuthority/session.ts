@@ -13,6 +13,8 @@ export type TContent = {
 	lastActiveTime: string
 	/** 用户ip */
 	ip: string
+	/** 加密后的id */
+	encrypt: string
 	[key: string]: TBasics | TJSON
 }
 

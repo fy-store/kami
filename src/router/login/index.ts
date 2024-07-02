@@ -3,6 +3,7 @@ import { postCheck } from './check.js'
 import { hash } from '#systemLib'
 import { admin } from '#db'
 import { formatDate } from 'assist-tools'
+import { symmetricEncrypt } from '#lib'
 
 const router = new Router({ prefix: '/login' })
 export default router
@@ -85,15 +86,17 @@ router.post('/', async (ctx) => {
 			ip: ctx.ip,
 			identity: 'admin',
 			createTime: formatDate(now),
-			lastActiveTime: formatDate(now)
+			lastActiveTime: formatDate(now),
+			encrypt: ''
 		})
+		await session.update(token, 'encrypt', symmetricEncrypt.encrypt(token))
 	}
 
 	ctx.body = {
 		code: 0,
 		msg: '登录成功',
 		data: {
-			token
+			token: session.get(token).encrypt
 		}
 	}
 })

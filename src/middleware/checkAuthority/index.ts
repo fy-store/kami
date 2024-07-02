@@ -1,41 +1,22 @@
-import { type Context, type Next } from 'koa'
-import { CheckAuthority } from '#systemLib'
 import session from './session.js'
+import { type Context, type Next } from 'koa'
 import { formatDate } from 'assist-tools'
-
-const checkAuthority = new CheckAuthority({
-	baseURL: '/api',
-	router: {
-		admin: [
-			{
-				url: '/admin',
-				method: '*',
-				match: 'startWith'
-			}
-		]
-	},
-	whiteList: [
-		{
-			method: '*',
-			url: '/login',
-			match: 'startWith'
-		},
-		{
-			method: 'POST',
-			url: '/logout',
-			match: 'startWith'
-		}
-	]
-})
+import checkAuthority from './config.js'
+import { symmetricEncrypt } from '#lib'
 
 /**
  * 权限校验中间件
  */
 export default () => {
 	return async (ctx: Context, next: Next) => {
+		let id = null
+		try {
+			id = symmetricEncrypt.decrypt(ctx.header.authorization)
+		} catch {}
+
 		ctx.container.userSession = {
-			id: ctx.header.authorization,
-			content: session.get(ctx.header.authorization),
+			id,
+			content: session.get(id),
 			session
 		}
 
