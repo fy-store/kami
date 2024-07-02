@@ -33,7 +33,7 @@ const runIf = {
 /**
  * 校验器
  */
-export default class Check {
+export default class Check<T extends TConfig[]> {
 	static required = required
 	static type = typeFun
 	static length = length
@@ -49,7 +49,7 @@ export default class Check {
 	 * @param config 规则数组
 	 * @param options 配置选项
 	 */
-	constructor(config: TConfig[], options: TOptions = {}) {
+	constructor(config: T, options: TOptions = {}) {
 		if (isType(config) !== 'array') {
 			throw new TypeError('"config" must be an array !')
 		}
@@ -245,7 +245,6 @@ export default class Check {
 				fixed: null,
 				error: null
 			})
-
 		return {
 			state,
 			data,

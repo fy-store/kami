@@ -46,7 +46,7 @@ export const allowType = {
  * @param type 指定的类型
  * @returns 存在返回 实例对象, 否则将抛出错误
  */
-export default function (obj: object, key: string | number | symbol, type: TAllow | TAllow[]): Check {
+export default function (obj: object, key: string | number | symbol, type: TAllow | TAllow[]): typeof Check {
 	if (!Array.isArray(type)) {
 		type = [type]
 	}
