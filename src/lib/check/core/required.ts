@@ -6,7 +6,7 @@ import Check from '../index.js'
  * @param key 验证的键
  * @returns 存在返回 实例对象, 否则将抛出错误
  */
-export default function (object: object, key: string | number | symbol): Check {
+export default function (object: object, key: string | number | symbol): typeof Check {
 	const result = Object.hasOwn(object, key)
 	if (!result) {
 		throw new Error(`The key "${String(key)}" does not exist on "object" !`)
