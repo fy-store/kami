@@ -151,11 +151,13 @@ export default class Check<
 		}
 
 		const state = {} as State
+		const errorMsg = []
 		this.#options.onBefore &&
 			(await this.#options.onBefore({
 				data,
 				state,
 				fixed: null,
+				errorMsg,
 				error: null
 			}))
 
@@ -164,6 +166,7 @@ export default class Check<
 				fixed: item.fixed,
 				state,
 				data,
+				errorMsg,
 				error: null
 			}
 
@@ -175,6 +178,9 @@ export default class Check<
 					config.onSuccess && (await config.onSuccess(ctx))
 				} catch (error) {
 					ctx.error = error
+					if (Object.hasOwn(config, 'errorMsg')) {
+						errorMsg.push(config.errorMsg)
+					}
 					if (config.onError) {
 						await config.onError(ctx)
 					} else {
@@ -190,6 +196,7 @@ export default class Check<
 				data,
 				state,
 				fixed: null,
+				errorMsg,
 				error: null
 			}))
 
@@ -197,6 +204,7 @@ export default class Check<
 			state,
 			data: data as TData,
 			fixed: null,
+			errorMsg,
 			error: null
 		}
 	}
@@ -213,11 +221,13 @@ export default class Check<
 		}
 
 		const state = {} as State
+		const errorMsg = []
 		this.#options.onBefore &&
 			this.#options.onBefore({
 				data,
 				state,
 				fixed: null,
+				errorMsg,
 				error: null
 			})
 
@@ -226,6 +236,7 @@ export default class Check<
 				fixed: item.fixed,
 				state,
 				data,
+				errorMsg,
 				error: null
 			}
 
@@ -237,6 +248,9 @@ export default class Check<
 					config.onSuccess && config.onSuccess(ctx)
 				} catch (error) {
 					ctx.error = error
+					if (Object.hasOwn(config, 'errorMsg')) {
+						errorMsg.push(config.errorMsg)
+					}
 					if (config.onError) {
 						config.onError(ctx)
 					} else {
@@ -252,12 +266,14 @@ export default class Check<
 				data,
 				state,
 				fixed: null,
+				errorMsg,
 				error: null
 			})
 		return {
 			state,
 			data: data as TData,
 			fixed: null,
+			errorMsg,
 			error: null
 		}
 	}

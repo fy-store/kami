@@ -9,6 +9,8 @@ export type THook<TState, TData> = (ctx: {
 	data: TData
 	/** 错误对象 */
 	error: null | Error
+	/** 错误消息配置信息 */
+	errorMsg: any[]
 }) => void | Promise<void>
 
 export type TConfig<TState, TData> = {
@@ -20,6 +22,8 @@ export type TConfig<TState, TData> = {
 		| {
 				/** 字段是否必填 */
 				expect: boolean
+				/** 若启用该项配置, 当规则产生错误时 errorMsg 将被写入上下文的 errorMsg 数组中 */
+				errorMsg?: any
 				/** 钩子函数, 在该规则验证前触发 */
 				onBefore?: THook<TState, TData>
 				/** 钩子函数, 在该规则验证通过时触发 */
@@ -72,6 +76,8 @@ export type TConfig<TState, TData> = {
 				 * - **\*** 任何类型
 				 */
 				expect: TAllow | TAllow[]
+				/** 若启用该项配置, 当规则产生错误时 errorMsg 将被写入上下文的 errorMsg 数组中 */
+				errorMsg?: any
 				/** 钩子函数, 在该规则验证前触发 */
 				onBefore?: THook<TState, TData>
 				/** 钩子函数, 在该规则验证通过时触发 */
@@ -90,6 +96,8 @@ export type TConfig<TState, TData> = {
 			/** 最大长度(包括最大长) */
 			max: number
 		}
+		/** 若启用该项配置, 当规则产生错误时 errorMsg 将被写入上下文的 errorMsg 数组中 */
+		errorMsg?: any
 		/** 钩子函数, 在该规则验证前触发 */
 		onBefore?: THook<TState, TData>
 		/** 钩子函数, 在该规则验证通过时触发 */
@@ -121,6 +129,7 @@ export type TParseConfig<TState, TData> = {
 	fixed: string
 	required: {
 		expect: boolean
+		errorMsg?: any
 		onBefore?: THook<TState, TData>
 		onSuccess?: THook<TState, TData>
 		onError?: THook<TState, TData>
@@ -128,6 +137,7 @@ export type TParseConfig<TState, TData> = {
 	}
 	type: {
 		expect: TAllow | TAllow[]
+		errorMsg?: any
 		onBefore?: THook<TState, TData>
 		onSuccess?: THook<TState, TData>
 		onError?: THook<TState, TData>
@@ -138,6 +148,7 @@ export type TParseConfig<TState, TData> = {
 			min: number
 			max: number
 		}
+		errorMsg?: any
 		onBefore?: THook<TState, TData>
 		onSuccess?: THook<TState, TData>
 		onError?: THook<TState, TData>
