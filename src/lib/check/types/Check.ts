@@ -26,7 +26,7 @@ export type TConfig<TState, TData> = {
 				onSuccess?: THook<TState, TData>
 				/** 钩子函数, 在该规则验证失败时触发 */
 				onError?: THook<TState, TData>
-				/** 钩子函数, 在该规则验证之后触发 */
+				/** 钩子函数, 在该规则验证之后触发, 若出现 "规则错误" 未捕获, 则该钩子不会触发 */
 				onAfter?: THook<TState, TData>
 		  }
 	/** 字段类型, 默认为 * 允许任何类型 */
@@ -42,7 +42,7 @@ export type TConfig<TState, TData> = {
 				onSuccess?: THook<TState, TData>
 				/** 钩子函数, 在该规则验证失败时触发 */
 				onError?: THook<TState, TData>
-				/** 钩子函数, 在该规则验证之后触发 */
+				/** 钩子函数, 在该规则验证之后触发, 若出现 "规则错误" 未捕获, 则该钩子不会触发 */
 				onAfter?: THook<TState, TData>
 		  }
 	/** 字段长度, 验证 length 属性, 不配置则不校验 */
@@ -60,7 +60,7 @@ export type TConfig<TState, TData> = {
 		onSuccess?: THook<TState, TData>
 		/** 钩子函数, 在该规则验证失败时触发 */
 		onError?: THook<TState, TData>
-		/** 钩子函数, 在该规则验证之后触发 */
+		/** 钩子函数, 在该规则验证之后触发, 若出现 "规则错误" 未捕获, 则该钩子不会触发 */
 		onAfter?: THook<TState, TData>
 	}
 }
