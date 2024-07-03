@@ -29,12 +29,48 @@ export type TConfig<TState, TData> = {
 				/** 钩子函数, 在该规则验证之后触发, 若出现 "规则错误" 未捕获, 则该钩子不会触发 */
 				onAfter?: THook<TState, TData>
 		  }
-	/** 字段类型, 默认为 * 允许任何类型 */
+	/**
+	 * 字段类型, 默认为 * 允许任何类型
+	 * - **string** 字符串
+	 * - **number** 数字类型
+	 * - **bigint** bigint(大整数) 类型
+	 * - **boolean** boolean 类型
+	 * - **symbol** symbol 类型
+	 * - **undefined** undefind 类型
+	 * - **object** 对象类型
+	 * - **function** 函数类型
+	 * - **numberString** 数字或数字字符串(别名 stringNumber)
+	 * - **stringNumber** 数字或数字字符串(numberString 别名)
+	 * - **positiveIntNumber** 大于 0 的整数
+	 * - **intNumber** 整数, 包括 0, 正整数, 负整数
+	 * - **effectiveNumber** 有效的数字, 排除 NaN, Infinity, -Infinity
+	 * - **null** null 类型
+	 * - **array** 数组类型
+	 * - **\*** 任何类型
+	 */
 	type?:
 		| TAllow
 		| TAllow[]
 		| {
-				/** 字段类型, 默认为 * 允许任何类型 */
+				/**
+				 * 字段类型, 默认为 * 允许任何类型
+				 * - **string** 字符串
+				 * - **number** 数字类型
+				 * - **bigint** bigint(大整数) 类型
+				 * - **boolean** boolean 类型
+				 * - **symbol** symbol 类型
+				 * - **undefined** undefind 类型
+				 * - **object** 对象类型
+				 * - **function** 函数类型
+				 * - **numberString** 数字或数字字符串(别名 stringNumber)
+				 * - **stringNumber** 数字或数字字符串(numberString 别名)
+				 * - **positiveIntNumber** 大于 0 的整数
+				 * - **intNumber** 整数, 包括 0, 正整数, 负整数
+				 * - **effectiveNumber** 有效的数字, 排除 NaN, Infinity, -Infinity
+				 * - **null** null 类型
+				 * - **array** 数组类型
+				 * - **\*** 任何类型
+				 */
 				expect: TAllow | TAllow[]
 				/** 钩子函数, 在该规则验证前触发 */
 				onBefore?: THook<TState, TData>

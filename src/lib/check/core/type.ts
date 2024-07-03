@@ -1,13 +1,28 @@
 import { TAllow } from '../types/type.js'
 import Check from '../index.js'
-import { isType, isStrNum } from 'assist-tools'
+import { isType, isStrNum, isPositiveInt, isInt, isNum } from 'assist-tools'
 
 export const allowType = {
 	string(data: unknown) {
 		return isType(data) === 'string'
 	},
+	numberString(data: unknown) {
+		return isStrNum(data)
+	},
 	number(data: unknown) {
 		return isType(data) === 'number'
+	},
+	stringNumber(data: unknown) {
+		return isStrNum(data)
+	},
+	positiveIntNumber(data: unknown) {
+		return isPositiveInt(data)
+	},
+	intNumber(data: unknown) {
+		return isInt(data)
+	},
+	effectiveNumber(data: unknown) {
+		return isNum(data)
 	},
 	bigint(data: unknown) {
 		return isType(data) === 'bigint'
@@ -27,9 +42,7 @@ export const allowType = {
 	function(data: unknown) {
 		return isType(data) === 'function'
 	},
-	numberString(data: unknown) {
-		return isStrNum(data)
-	},
+
 	null(data: unknown) {
 		return isType(data) === 'null'
 	},

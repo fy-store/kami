@@ -1,13 +1,3 @@
-export type TAllow =
-	| '*'
-	| 'number'
-	| 'string'
-	| 'numberString'
-	| 'boolean'
-	| 'symbol'
-	| 'bigint'
-	| 'undefined'
-	| 'null'
-	| 'object'
-	| 'array'
-	| 'function'
+import { allowType } from '../core/type.js'
+
+export type TAllow = keyof typeof allowType | '*'
