@@ -150,7 +150,7 @@ export default class Check<
 			throw new TypeError('"data" must be an object !')
 		}
 
-		const state = {} as State
+		const state = Object.create(null) as State
 		const errorMsg = []
 		this.#options.onBefore &&
 			(await this.#options.onBefore({
@@ -220,7 +220,7 @@ export default class Check<
 			throw new TypeError('"data" must be an object !')
 		}
 
-		const state = {} as State
+		const state = Object.create(null) as State
 		const errorMsg = []
 		this.#options.onBefore &&
 			this.#options.onBefore({
