@@ -13,11 +13,13 @@ export default `create table if not exists ${name}(
     \`desc\` varchar(${descLength}) not null comment '描述',
     content text not null comment '内容',
     remark text not null comment '备注',
-    state varchar(${stateLength}) null default '1' comment '${disabled}-禁用中, ${notUse}-未使用, ${use}-已使用',
+    state varchar(${stateLength}) null default '${notUse}' comment '${disabled}-禁用中, ${notUse}-未使用, ${use}-已使用',
+    useTime datetime comment '使用时间',
     deleteTime datetime comment '删除时间, UTC时间',
     index(token),
     index(createTime),
     index(title),
     index(state),
+    index(useTime),
     index(deleteTime)
 )`
