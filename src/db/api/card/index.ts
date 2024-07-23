@@ -53,7 +53,7 @@ export const queryList = (params: QueryListParams = {}) => {
 	`
 	if (state.length > 0) {
 		sql += `
-		state in(${repeatData(state.length, '?', ', ')})
+		state in(${repeatData('?', state.length, ', ')})
 		and
 		`
 		q.push(...state)
@@ -85,7 +85,7 @@ export const queryListCount = (params: QueryListCountParams = {}) => {
 	`
 	if (state.length > 0) {
 		sql += `
-		state in(${repeatData(state.length, '?', ', ')})
+		state in(${repeatData('?', state.length, ', ')})
 		and
 		`
 		q.push(...state)
